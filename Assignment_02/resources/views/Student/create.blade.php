@@ -6,11 +6,11 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">Create New Student</div>
-                    <div class="card-body">
+                       <div class="card-body">
                         <form action="{{ route('students.store') }}" method="POST">
                             @csrf
                             <div class="mb-3">
-                                <label for="name" class="form-label">Student Name</label>
+                                <label for="name" class="form-label">Student</label>
                                  <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}">
                                 
                                 @error('name') <!-- Display the validation error for 'name' -->
@@ -56,7 +56,7 @@
 
                             <button type="submit" class="btn btn-primary">Create</button>
                         </form>
-                    </div>
+                       </div>
                 </div>
             </div>
         </div>

@@ -1,16 +1,22 @@
 <?php
+
 namespace App\Services;
 use App\Repositories\MajorRepositoryInterface;
 use App\Services\MajorServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
+
+/**
+ * MajorService
+ */
 class MajorService implements MajorServiceInterface
 {
     /**
      * @var MajorRepositoryInterface
      */
     private $majorRepository;
+
     /**
-     * majorService constructor.
+     * MajorService constructor.
      *
      * @param MajorRepositoryInterface $majorRepository
      */
@@ -18,6 +24,7 @@ class MajorService implements MajorServiceInterface
     {
         $this->majorRepository = $majorRepository;
     }
+
     /**
      * Get all majors.
      *
@@ -27,6 +34,7 @@ class MajorService implements MajorServiceInterface
     {
         return $this->majorRepository->getAllMajors();
     }
+
     /**
      * Create a new major.
      * 
@@ -38,14 +46,30 @@ class MajorService implements MajorServiceInterface
     {
         $this->majorRepository->createMajor($name);
     }
+
+    /**
+     * GetMajorById
+     *
+     * @param integer $id
+     * @return void
+     */
     public function getMajorById(int $id)
     {
         return $this->majorRepository->getMajorById($id);
     }
+
+    /**
+     * UpdateMajor
+     *
+     * @param integer $id
+     * @param string $name
+     * @return void
+     */
     public function updateMajor(int $id, string $name): void
     {
-        $this->majorRepository->updateMajor($id,$name);
+        $this->majorRepository->updateMajor($id, $name);
     }
+
     /**
      * Delete a major by ID.
      * 

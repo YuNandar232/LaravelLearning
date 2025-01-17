@@ -12,6 +12,10 @@ Route::get('/majors/{id}/edit', [MajorController::class, 'edit'])->name('majors.
 Route::put('/majors/{id}', [MajorController::class, 'update'])->name('majors.update'); 
 Route::delete('/major/{id}', [MajorController::class, 'destroy'])
     ->name('majors.destroy');
+Route::post('/majors/import', [MajorController::class, 'import'])
+    ->name('majors.import');
+Route::get('/majors/export', [MajorController::class, 'export'])
+    ->name('majors.export');
     
 Route::get('/students', [StudentController::class, 'index'])->name('students.index');
 Route::get('/students/create', [StudentController::class, 'create'])
@@ -21,4 +25,8 @@ Route::get('/students/{id}/edit', [StudentController::class, 'edit'])->name('stu
 Route::put('/students/{id}', [StudentController::class, 'update'])->name('students.update'); // Update student
 Route::delete('/student/{id}', [StudentController::class, 'destroy'])
       ->name('students.destroy');
+Route::post('/students/import', [StudentController::class, 'import'])
+    ->name('students.import');
+Route::get('/students/export', [StudentController::class, 'export'])
+    ->name('students.export');
 

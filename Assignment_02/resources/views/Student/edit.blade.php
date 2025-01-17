@@ -13,7 +13,7 @@
                             
                             <!-- Student Name -->
                             <div class="mb-3">
-                                <label for="name" class="form-label">Student Name</label>
+                                <label for="name" class="form-label">Student</label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $student->name) }}">
                              @error('name') <!-- Display the validation error for 'name' -->
                                     <span class="text-danger">{{ $message }}</span>

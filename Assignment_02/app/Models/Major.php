@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Major Model
+ */
 class Major extends Model
 {
     protected $table = 'majors';
@@ -12,7 +15,9 @@ class Major extends Model
     protected $fillable = ['name'];
 
     /**
-     * Get the students for the major.
+     * Students
+     *
+     * @return void
      */
     public function students()
     {

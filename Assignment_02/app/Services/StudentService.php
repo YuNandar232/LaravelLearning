@@ -3,12 +3,17 @@ namespace App\Services;
 use App\Repositories\StudentRepositoryInterface;
 use App\Services\StudentServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
+
+/**
+ * StudentService
+ */
 class StudentService implements StudentServiceInterface
 {
     /**
      * @var StudentRepositoryInterface
      */
     private $studentRepository;
+
     /**
      * studentService constructor.
      *
@@ -18,6 +23,7 @@ class StudentService implements StudentServiceInterface
     {
         $this->studentRepository = $studentRepository;
     }
+
     /**
      * Get all students.
      *
@@ -27,6 +33,7 @@ class StudentService implements StudentServiceInterface
     {
         return $this->studentRepository->getAllStudents();
     }
+
     /**
      * Create a new student.
      * 
@@ -38,14 +45,30 @@ class StudentService implements StudentServiceInterface
     {
         $this->studentRepository->createStudent($student_data);
     }
+
+    /**
+     * GetStudentById
+     *
+     * @param integer $id
+     * @return void
+     */
     public function getStudentById(int $id)
     {
         return $this->studentRepository->getStudentById($id);
     }
+
+    /**
+     * Update Student
+     *
+     * @param integer $id
+     * @param array $student_data
+     * @return void
+     */
     public function updatestudent(int $id, array $student_data): void
     {
         $this->studentRepository->updateStudent($id, $student_data);
     }
+    
     /**
      * Delete a student by ID.
      * 

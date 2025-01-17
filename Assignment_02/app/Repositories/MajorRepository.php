@@ -1,7 +1,12 @@
 <?php
+
 namespace App\Repositories;
 use App\Models\Major;
 use Illuminate\Database\Eloquent\Collection;
+
+/**
+ * MajorRepository
+ */
 class MajorRepository implements MajorRepositoryInterface
 {
     /**
@@ -13,8 +18,10 @@ class MajorRepository implements MajorRepositoryInterface
     {
         return Major::orderBy('created_at', 'asc')->get();
     }
+
     /**
      * Create Major.
+     * 
      * @param string $name
      * @return void
      */
@@ -24,11 +31,25 @@ class MajorRepository implements MajorRepositoryInterface
         $major->name = $name;
         $major->save();
     }
+
+    /**
+     * GetMajorById
+     *
+     * @param integer $id
+     * @return void
+     */
     public function getMajorById(int $id)
     {
          return Major::findOrFail($id); // Find the major by ID, will throw an exception if not found
     }
 
+    /**
+     * UpdateMajor
+     *
+     * @param integer $id
+     * @param string $name
+     * @return void
+     */
     public function updateMajor(int $id, string $name): void
     {
          // Find the major by ID
@@ -38,6 +59,7 @@ class MajorRepository implements MajorRepositoryInterface
          // Save the changes to the database
          $major->save();
     }
+    
     /**
      * Delete Major.
      * @param int $id

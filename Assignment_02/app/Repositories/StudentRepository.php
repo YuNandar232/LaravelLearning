@@ -2,6 +2,10 @@
 namespace App\Repositories;
 use App\Models\Student;
 use Illuminate\Database\Eloquent\Collection;
+
+/**
+ * StudentRepository
+ */
 class StudentRepository implements StudentRepositoryInterface
 {
     /**
@@ -13,6 +17,7 @@ class StudentRepository implements StudentRepositoryInterface
     {
         return Student::with('major')->orderBy('created_at', 'asc')->get();
     }
+    
     /**
      * Create Student.
      * @param string $name
@@ -29,11 +34,25 @@ class StudentRepository implements StudentRepositoryInterface
             'address' => $student_data['address'],
         ]);
     }
+
+    /**
+     * GetStudentById
+     *
+     * @param integer $id
+     * @return void
+     */
     public function getStudentById(int $id)
     {
          return Student::findOrFail($id); // Find the major by ID, will throw an exception if not found
     }
 
+    /**
+     * Update Student
+     *
+     * @param integer $id
+     * @param array $student_data
+     * @return void
+     */
     public function updateStudent(int $id, array $student_data): void
     {
          // Find the student by ID
@@ -46,6 +65,7 @@ class StudentRepository implements StudentRepositoryInterface
              'address' => $student_data['address'],
         ]);
     }
+
     /**
      * Delete Student.
      * @param int $id

@@ -14,7 +14,7 @@
         body {
             font-family: 'Noto Sans', sans-serif;
         }
-        .navbar-nav a {
+        .navbar-nav .nav-item {
             margin-right: 15px;
         }
         .fa-btn {
@@ -26,30 +26,41 @@
         .container {
             margin-top: 30px;
         }
+        .active-nav {
+            color: rgb(3, 52, 120); /* Custom text color */
+            font-weight: bold; /* Optional: make the active link bold */
+        }
+        .active-nav:hover {
+            color: #004085; /* Darker color when hovered */
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav mr-auto">
-                    <!-- Students Button -->
-                    <li class="nav-item">
-                        <a class="btn btn-primary" href="{{ route('majors.index') }}">Majors</a>
-                    </li>
-
-                    <!-- Majors Button -->
-                    <li class="nav-item">
-                        <a class="btn btn-primary" href="{{ route('students.index') }}">Students</a>
-                    </li>
-                </ul>
-            </div>
+    <div class="container bg-light">
+       <nav class="navbar navbar-expand-lg navbar-light">
+          <a class="navbar-brand" href="#">Navbar</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <!-- Majors Nav Item -->
+               <li class="nav-item @if(request()->routeIs('majors.index') || request()->routeIs('majors.create') || request()->routeIs('majors.edit')) active-nav @endif">
+                <a class="nav-link" href="{{ route('majors.index') }}">Majors</a>
+              </li>
+              
+              <!-- Students Nav Item -->
+              <li class="nav-item @if(request()->routeIs('students.index') || request()->routeIs('students.create') || request()->routeIs('students.edit')) active-nav @endif">
+                <a class="nav-link" href="{{ route('students.index') }}">Students</a>
+            </li>
+            </ul>
+          </div>
         </nav>
     </div>
 
     @yield('content') <!-- Content Section -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
