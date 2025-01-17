@@ -4,7 +4,7 @@ use App\Models\Student;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
- * StudentRepository
+ * Student Repository
  */
 class StudentRepository implements StudentRepositoryInterface
 {
@@ -36,7 +36,7 @@ class StudentRepository implements StudentRepositoryInterface
     }
 
     /**
-     * GetStudentById
+     * Get Student By Id
      *
      * @param integer $id
      * @return void

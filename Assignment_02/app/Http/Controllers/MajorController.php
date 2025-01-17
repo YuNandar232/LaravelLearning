@@ -5,14 +5,12 @@ use App\Services\MajorServiceInterface;
 use App\Http\Requests\MajorRequest;
 use Illuminate\Http\RedirectResponse;
 use App\Exports\MajorsExport;
-use App\Imports\MajorsImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\HeadingRowImport;
 
 /**
- * MajorController
+ * Major Controller
  */
 class MajorController extends Controller
 {
@@ -22,7 +20,7 @@ class MajorController extends Controller
     private $majorService;
 
     /**
-     * MajorController constructor.
+     * Major Controller constructor.
      *
      * @param MajorServiceInterface $majorService
      */
@@ -116,52 +114,19 @@ class MajorController extends Controller
     }
 
     /**
-     * Import Major
+     * Import Majors
      *
      * @return void
      */
-    public function import(Request $request)
+    public function import(Request  $request)
     {
-         // Validate the uploaded file
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv|max:10240',
-         ]);
-
-        // Get the headers from the uploaded file
-        $headingRowImport = new HeadingRowImport();
-        $headings = $headingRowImport->toArray($request->file('file'))[0][0]; // First sheet, first row (headers)
-
-        // Expected headers (all in lowercase for comparison)
-        $expectedHeaders = [ 'name',  ];
-
-        // Normalize all headers to lowercase for case-insensitive comparison
-        $normalizedHeadings = array_map('strtolower', $headings);
-
-        $normalizedExpectedHeaders = array_map('strtolower', $expectedHeaders);
-
-        // Identify wrong headers (headers that do not match expected ones)
-        $wrongHeaders = [];
-
-        // Check if any headers in the file do not match the expected headers
-        foreach ($normalizedHeadings as $heading) {
-            if (!in_array($heading, $normalizedExpectedHeaders)) {
-                $wrongHeaders[] = $heading;
-            }
-        }
-
-        // If there are any wrong headers, return an error
-        if (!empty($wrongHeaders)) {
-            // Join wrong headers and return the error message
-            return back()->withErrors(['error' => 'Wrong header(s): ' . implode(', ', $wrongHeaders)]);
-        }
-
-          $import = new MajorsImport();
-
         try {
-            // Perform the import
-            Excel::import($import, $request->file('file'));
+            // Validate the file using the service
+            $this->majorService->validateFile($request->file('file'));
 
-            // Success message
+            // If validation passes, perform the import
+            $this->majorService->importMajors($request->file('file'));
+
             return back()->with('success', 'File imported successfully!');
 
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {

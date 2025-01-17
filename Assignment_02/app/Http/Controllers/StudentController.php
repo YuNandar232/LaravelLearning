@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\HeadingRowImport;
 
 /**
- * StudentController
+ * Student Controller
  */
 class StudentController extends Controller
 {
@@ -126,58 +126,20 @@ class StudentController extends Controller
     }
 
     /**
-     * Import Student
+     * Import Students
      *
      * @param Request $request
      * @return void
      */
     public function import(Request $request)
     {
-         // Validate the uploaded file
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv|max:10240',
-         ]);
-
-         // Get the headers from the uploaded file
-        $headingRowImport = new HeadingRowImport();
-        $headings = $headingRowImport->toArray($request->file('file'))[0][0];
-
-        // Expected headers (all in lowercase for comparison)
-        $expectedHeaders = [
-        'student',
-        'major',
-        'phone',
-        'email',
-        'address'
-        ];
-
-        // Normalize all headers to lowercase for case-insensitive comparison
-        $normalizedHeadings = array_map('strtolower', $headings);
-        $normalizedExpectedHeaders = array_map('strtolower', $expectedHeaders);
-
-        // Identify wrong headers (headers that do not match expected ones)
-        $wrongHeaders = [];
-
-        // Check if any headers in the file do not match the expected headers
-        foreach ($normalizedHeadings as $heading) {
-            if (!in_array($heading, $normalizedExpectedHeaders)) {
-                $wrongHeaders[] = $heading;
-            }
-        }
-
-        // If there are any wrong headers, return an error
-        if (!empty($wrongHeaders)) {
-            // Join wrong headers and return the error message
-            return back()->withErrors(['error' => 'Wrong header(s): ' . implode(', ', $wrongHeaders)]);
-        }
-
-        $import = new StudentsImport();
-
         try {
-            // Perform the import
-            Excel::import($import, $request->file('file'));
+            // Validate the file using the service
+            $this->studentService->validateFile($request->file('file'));
 
-            // Success message
+            // If validation passes, perform the import
+            $this->studentService->importStudents($request->file('file'));
+
             return back()->with('success', 'File imported successfully!');
 
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {

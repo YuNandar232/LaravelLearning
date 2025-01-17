@@ -10,30 +10,8 @@
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
     <!-- Styles -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
-    <style>
-        body {
-            font-family: 'Noto Sans', sans-serif;
-        }
-        .navbar-nav .nav-item {
-            margin-right: 15px;
-        }
-        .fa-btn {
-            margin-right: 6px;
-        }
-        ul {
-            margin-bottom: 0px;
-        }
-        .container {
-            margin-top: 30px;
-        }
-        .active-nav {
-            color: rgb(3, 52, 120); /* Custom text color */
-            font-weight: bold; /* Optional: make the active link bold */
-        }
-        .active-nav:hover {
-            color: #004085; /* Darker color when hovered */
-        }
-    </style>
+     <!-- External CSS -->
+    <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
 </head>
 <body>
     <div class="container bg-light">
@@ -45,12 +23,12 @@
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
               <!-- Majors Nav Item -->
-               <li class="nav-item @if(request()->routeIs('majors.index') || request()->routeIs('majors.create') || request()->routeIs('majors.edit')) active-nav @endif">
-                <a class="nav-link" href="{{ route('majors.index') }}">Majors</a>
-              </li>
+              <li class="nav-item {{ request()->routeIs('majors*') ? 'active-nav' : '' }}">
+              <a class="nav-link" href="{{ route('majors.index') }}">Majors</a>
+               </li>
               
               <!-- Students Nav Item -->
-              <li class="nav-item @if(request()->routeIs('students.index') || request()->routeIs('students.create') || request()->routeIs('students.edit')) active-nav @endif">
+              <li class="nav-item {{ request()->routeIs('students*') ? 'active-nav' : '' }}">
                 <a class="nav-link" href="{{ route('students.index') }}">Students</a>
             </li>
             </ul>
@@ -62,5 +40,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/major/delete.js') }}"></script>
+    <script src="{{ asset('js/student/delete.js') }}"></script>
 </body>
 </html>

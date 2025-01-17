@@ -113,14 +113,11 @@
                                                 </td>
                                                 <td>
                                                     <!-- Delete Button (using an anchor tag for deletion) -->
-                                                    <a href="{{ route('students.destroy', $student->id) }}"
-                                                        class="btn btn-danger d-flex justify-content-center align-items-center"
-                                                        onclick="event.preventDefault(); 
-                                                                if(confirm('Are you sure you want to delete this student?')) {
-                                                                    document.getElementById('delete-form-{{ $student->id }}').submit();
-                                                                }">
-                                                        <i class="fa fa-btn fa-trash"></i>Delete
-                                                    </a>
+                                                     <a href="{{ route('students.destroy', $student->id) }}"
+                                                      class="btn btn-danger d-flex justify-content-center align-items-center btn-delete-student"
+                                                      data-form-id="delete-form-{{ $student->id }}">
+                                                      <i class="fa fa-btn fa-trash"></i>Delete
+                                                     </a>
 
                                                     <!-- Hidden form for delete action -->
                                                     <form id="delete-form-{{ $student->id }}"

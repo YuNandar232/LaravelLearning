@@ -5,7 +5,7 @@ use App\Models\Major;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
- * MajorRepository
+ * Major Repository
  */
 class MajorRepository implements MajorRepositoryInterface
 {
@@ -33,7 +33,7 @@ class MajorRepository implements MajorRepositoryInterface
     }
 
     /**
-     * GetMajorById
+     * Get Major By Id
      *
      * @param integer $id
      * @return void
@@ -44,7 +44,7 @@ class MajorRepository implements MajorRepositoryInterface
     }
 
     /**
-     * UpdateMajor
+     * Update Major
      *
      * @param integer $id
      * @param string $name

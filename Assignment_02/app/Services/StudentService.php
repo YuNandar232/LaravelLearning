@@ -3,9 +3,13 @@ namespace App\Services;
 use App\Repositories\StudentRepositoryInterface;
 use App\Services\StudentServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\HeadingRowImport;
+use App\Imports\StudentsImport;
 
 /**
- * StudentService
+ * Student Service
  */
 class StudentService implements StudentServiceInterface
 {
@@ -47,7 +51,7 @@ class StudentService implements StudentServiceInterface
     }
 
     /**
-     * GetStudentById
+     * Get Student ById
      *
      * @param integer $id
      * @return void
@@ -79,5 +83,70 @@ class StudentService implements StudentServiceInterface
     public function deleteStudent(int $id): void
     {
         $this->studentRepository->deleteStudent($id);
+    }
+
+    /**
+     * Validate the uploaded file (size, type, headers).
+     *
+     * @param  \Illuminate\Http\UploadedFile $file
+     * @return void
+     */
+    public function validateFile($file)
+    {
+        // Validate file type and size manually
+        if (!in_array($file->getClientOriginalExtension(), ['xlsx', 'xls', 'csv'])) {
+            throw ValidationException::withMessages(['file' => 'Invalid file type. Only XLSX, XLS, and CSV are allowed.']);
+        }
+
+        if ($file->getSize() > 10240 * 1024) {  // 10MB
+            throw ValidationException::withMessages(['file' => 'File size exceeds the maximum allowed size of 10MB.']);
+        }
+
+        // Validate headers
+        $wrongHeaders = $this->validateHeaders($file);
+
+        if (!empty($wrongHeaders)) {
+            throw ValidationException::withMessages(['file' => 'Invalid headers: ' . implode(', ', $wrongHeaders)]);
+        }
+    }
+
+    /**
+     * Validate the headers of the uploaded file.
+     *
+     * @param  \Illuminate\Http\UploadedFile $file
+     * @return array
+     */
+    public function validateHeaders($file)
+    {
+        $headingRowImport = new HeadingRowImport();
+        $headings = $headingRowImport->toArray($file)[0][0]; // Get the first row (headers)
+
+        $expectedHeaders = [
+            'student',
+            'major',
+            'phone',
+            'email',
+            'address'
+            ];
+
+        // Normalize headers for case-insensitive comparison
+        $normalizedHeadings = array_map('strtolower', $headings);
+        $normalizedExpectedHeaders = array_map('strtolower', $expectedHeaders);
+
+        // Identify any mismatched headers
+        $wrongHeaders = array_diff($normalizedHeadings, $normalizedExpectedHeaders);
+
+        return $wrongHeaders;
+    }
+
+    /**
+     * Import the data after validation.
+     *
+     * @param  \Illuminate\Http\UploadedFile $file
+     * @return void
+     */
+    public function importStudents($file)
+    {
+        Excel::import(new StudentsImport(), $file);
     }
 }

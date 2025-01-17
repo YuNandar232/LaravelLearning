@@ -11,7 +11,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Illuminate\Support\Collection;
 
 /**
- * MajorImport
+ * Major Import
  */
 class MajorsImport implements ToModel,  WithHeadingRow , WithValidation
 {
@@ -29,17 +29,14 @@ class MajorsImport implements ToModel,  WithHeadingRow , WithValidation
         ]);
     }
 
-
     /**
-     * Write code on Method
+     * Validation
      *
      * @return response()
      */
     public function rules(): array
     {
         return [
-            'name' => 'required|max:255|unique:majors,name',
-
              // Above is alias for as it always validates in batches
              '*.name' => 'required|max:255|unique:majors,name',
         ];
