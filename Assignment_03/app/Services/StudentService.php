@@ -38,6 +38,17 @@ class StudentService implements StudentServiceInterface
         return $this->studentRepository->getAllStudents();
     }
 
+     /**
+     * Search students data.
+     *
+     * @param string|null $searchQuery
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function searchStudents(?string $searchQuery): Collection
+    {
+        return $this->studentRepository->searchStudents($searchQuery);
+    }
+    
     /**
      * Create a new student.
      * 

@@ -33,15 +33,18 @@ class StudentController extends Controller
     }
 
     /**
-     * Display a listing of the students.
+     * Search students data.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @param Request $request
+     * @return View
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        return view('Student.list', [
-            'students' => $this->studentService->getAllStudents(),
-        ]);
+        $searchQuery = $request->input('search');
+
+        $students = $this->studentService->searchStudents($searchQuery);
+
+        return view('Student.list', compact('students'));
     }
 
     /**

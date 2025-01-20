@@ -31,16 +31,17 @@
     </div>
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-md-10">
                 <div class="card">
                     <div class="card-header">
                         Student List
                     </div>
                     <div class="card-body">
+                   
                         <!-- Buttons Section -->
                         <div class="d-flex justify-content-between mb-4">
                             <!-- Align Import and Export to the left, Add Major to the right -->
-                            <div>
+                           <!-- <div>
                                 <button type="button" class="btn btn-primary ml-2" data-bs-toggle="modal"
                                     data-bs-target="#importModal">
                                     <i class="fa fa-file"></i> Import
@@ -48,12 +49,25 @@
                                 <a href="{{ route('students.export') }}" class="btn btn-primary">
                                     <i class="fa fa-download"></i> Export
                                 </a>
+                            </div>-->
+                             <div class="col-md-3">
+                               <a href="{{ route('students.create') }}" class="btn btn-primary">
+                               <i class="fa fa-btn fa-plus"></i> Add
+                               </a>
                             </div>
-                            <a href="{{ route('students.create') }}" class="btn btn-primary">
-                                <i class="fa fa-btn fa-plus"></i> Add
-                            </a>
+                            <!-- Search Form aligned to the center -->
+                          <div class="col-md-4">
+                <form method="GET" action="{{ route('students.index') }}" class="d-flex">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control"  value="{{ request('search') }}">
+                        <button type="submit" class="btn btn-primary ml-2 d-flex align-items-center">
+                         Search
+                    </button>
+                    </div>
+                </form>
+            </div>
                         </div>
-
+                        
                         <!-- Modal for Import File -->
                         <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel"
                             aria-hidden="true">

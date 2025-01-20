@@ -12,8 +12,19 @@
                 </div>
             </div>
         @endif
+        
+        <!-- Display Error Message for delete major-->
+        @if (session('error'))
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                </div>
+            </div>
+        @endif
 
-        <!-- Display Error Message -->
+        <!-- Display Error Message for import validation -->
         @if ($errors->any())
             <div class="row justify-content-center">
                 <div class="col-md-8">

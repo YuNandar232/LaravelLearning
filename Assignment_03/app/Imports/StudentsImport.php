@@ -41,7 +41,7 @@ class StudentsImport implements ToModel , WithHeadingRow , WithValidation
         return [
              '*.student' => 'required|string|max:255',
              '*.major' => 'required|string|max:255|exists:majors,name',
-             '*.phone' => 'numeric',
+             '*.phone' => 'max:15',
              '*.email' => 'email|max:100',
         ];
     }

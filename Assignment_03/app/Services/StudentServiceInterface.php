@@ -6,7 +6,7 @@ namespace App\Services;
  */
 interface StudentServiceInterface
 {
-    public function getAllStudents();
+    public function searchStudents(?string $searchQuery);
 
     public function createStudent(array $student_data);
 

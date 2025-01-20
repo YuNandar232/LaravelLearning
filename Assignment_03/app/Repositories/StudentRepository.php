@@ -1,7 +1,10 @@
 <?php
 namespace App\Repositories;
+
 use App\Models\Student;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Student Repository
@@ -18,6 +21,108 @@ class StudentRepository implements StudentRepositoryInterface
         return Student::with('major')->orderBy('created_at', 'asc')->get();
     }
     
+    /**
+     * Search students based on ORM.
+     *
+     * @param string|null $searchQuery
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    /* public function searchStudents(?string $searchQuery): Collection
+    {
+        if (!$searchQuery) {
+            return $this->getAllStudents();
+        }
+    
+        $searchQuery = strtolower($searchQuery);
+
+        // Start measuring time
+        $startTime = microtime(true);
+        // Enable query log
+        DB::enableQueryLog();
+
+        $students = Student::with('major') 
+            ->whereRaw('LOWER(name) LIKE ?', ['%' . $searchQuery . '%'])
+            ->orWhereRaw('LOWER(email) LIKE ?', ['%' . $searchQuery . '%'])
+            ->orWhereRaw('LOWER(phone) LIKE ?', ['%' . $searchQuery . '%'])
+            ->orWhereRaw('LOWER(address) LIKE ?', ['%' . $searchQuery . '%'])
+            ->orWhereHas('major', function ($query) use ($searchQuery) {
+                $query->whereRaw('LOWER(name) LIKE ?', ['%' . $searchQuery . '%']);
+            })
+        ->get();
+    
+         // Log the executed query 
+        $queries = DB::getQueryLog();
+        $totalTime = 0;
+
+        foreach ($queries as $query) {
+            $totalTime += $query['time'];  // Summing up the individual query times
+        }
+
+        // End measuring time
+        $endTime = microtime(true);
+
+        // Log the total execution time
+        Log::info('ORM execution time: ' . $totalTime . ' ms');
+    
+        return $students;
+    }   */
+
+    /**
+     * Search students based on the Raw.
+     *
+     * @param string|null $searchQuery
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function searchStudents(?string $searchQuery): Collection
+    {
+        if (!$searchQuery) {
+            return $this->getAllStudents();
+        }
+    
+        $searchQuery = strtolower($searchQuery);
+        
+        $startTime = microtime(true);
+
+        // Enable query log
+        DB::enableQueryLog();
+    
+        // Raw SQL query to search students and majors 
+        $resultsRaw = DB::select('
+        SELECT students.*, majors.name as major_name
+        FROM students
+        LEFT JOIN majors ON students.major_id = majors.id
+        WHERE LOWER(students.name) LIKE ? 
+        OR LOWER(students.email) LIKE ?
+        OR LOWER(students.phone) LIKE ?
+        OR LOWER(students.address) LIKE ?
+        OR LOWER(majors.name) LIKE ?',
+            [
+            '%' . $searchQuery . '%',
+            '%' . $searchQuery . '%',
+            '%' . $searchQuery . '%',
+            '%' . $searchQuery . '%',
+            '%' . $searchQuery . '%'
+            ]
+        );
+    
+        $queries = DB::getQueryLog();
+        $totalTime = 0;
+
+        foreach ($queries as $query) {
+            $totalTime += $query['time']; 
+        }
+
+        $endTime = microtime(true);
+
+        // Log the total execution time
+        Log::info('Raw Query execution time: ' . $totalTime . ' ms');
+    
+        // Convert raw results into Eloquent models using 'hydrate'
+        $students = Student::hydrate($resultsRaw);
+    
+         return $students; 
+    }   
+
     /**
      * Create Student.
      * @param string $name

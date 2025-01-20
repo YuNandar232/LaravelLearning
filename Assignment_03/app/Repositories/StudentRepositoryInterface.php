@@ -5,6 +5,8 @@ interface StudentRepositoryInterface
 {
     public function getAllStudents();
 
+    public function searchStudents(?string $searchQuery);
+
     public function createStudent(array $student_data);
 
     public function getStudentById(int $id);
