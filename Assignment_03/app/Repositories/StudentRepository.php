@@ -27,18 +27,13 @@ class StudentRepository implements StudentRepositoryInterface
      * @param string|null $searchQuery
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    /* public function searchStudents(?string $searchQuery): Collection
+    public function searchStudents(?string $searchQuery): Collection
     {
         if (!$searchQuery) {
             return $this->getAllStudents();
         }
     
         $searchQuery = strtolower($searchQuery);
-
-        // Start measuring time
-        $startTime = microtime(true);
-        // Enable query log
-        DB::enableQueryLog();
 
         $students = Student::with('major') 
             ->whereRaw('LOWER(name) LIKE ?', ['%' . $searchQuery . '%'])
@@ -50,22 +45,8 @@ class StudentRepository implements StudentRepositoryInterface
             })
         ->get();
     
-         // Log the executed query 
-        $queries = DB::getQueryLog();
-        $totalTime = 0;
-
-        foreach ($queries as $query) {
-            $totalTime += $query['time'];  // Summing up the individual query times
-        }
-
-        // End measuring time
-        $endTime = microtime(true);
-
-        // Log the total execution time
-        Log::info('ORM execution time: ' . $totalTime . ' ms');
-    
         return $students;
-    }   */
+    }   
 
     /**
      * Search students based on the Raw.
@@ -73,18 +54,13 @@ class StudentRepository implements StudentRepositoryInterface
      * @param string|null $searchQuery
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function searchStudents(?string $searchQuery): Collection
+    /* public function searchStudents(?string $searchQuery): Collection
     {
         if (!$searchQuery) {
             return $this->getAllStudents();
         }
     
         $searchQuery = strtolower($searchQuery);
-        
-        $startTime = microtime(true);
-
-        // Enable query log
-        DB::enableQueryLog();
     
         // Raw SQL query to search students and majors 
         $resultsRaw = DB::select('
@@ -105,23 +81,11 @@ class StudentRepository implements StudentRepositoryInterface
             ]
         );
     
-        $queries = DB::getQueryLog();
-        $totalTime = 0;
-
-        foreach ($queries as $query) {
-            $totalTime += $query['time']; 
-        }
-
-        $endTime = microtime(true);
-
-        // Log the total execution time
-        Log::info('Raw Query execution time: ' . $totalTime . ' ms');
-    
         // Convert raw results into Eloquent models using 'hydrate'
         $students = Student::hydrate($resultsRaw);
     
          return $students; 
-    }   
+    }  */  
 
     /**
      * Create Student.
