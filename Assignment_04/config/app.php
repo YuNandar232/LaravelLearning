@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\ServiceProvider;
+
 return [
 
     /*
@@ -123,4 +125,18 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'aliases' => [
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+    ],
+
+    'providers' => ServiceProvider::defaultProviders()
+        ->merge(
+            [
+             App\Providers\RepositoryProvider::class,
+              /*
+              * Package Service Providers...
+             */
+              Maatwebsite\Excel\ExcelServiceProvider::class,
+            ]
+        )->toArray(),
 ];
