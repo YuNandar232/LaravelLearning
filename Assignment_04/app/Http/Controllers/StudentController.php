@@ -34,8 +34,7 @@ class StudentController extends Controller
 
     /**
      * Display a listing of the students.
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return \Illuminate\View\View
      */
     public function index(): View
     {
@@ -47,7 +46,7 @@ class StudentController extends Controller
      *
      * @return JsonResponse
      */
-    public function fetchStudents()
+    public function fetchStudents(): JsonResponse
     {
         try {
             $students = $this->_studentService->getAllStudents();
@@ -65,10 +64,9 @@ class StudentController extends Controller
 
     /**
      * Show Student Form
-     *
-     * @return View
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function create(): JsonResponse
     {
         $majors = Major::all();
 
@@ -77,9 +75,8 @@ class StudentController extends Controller
 
     /**
      * Store Student
-     *
-     * @param StudentRequest $request
-     * @return JsonResponse
+     * @param \App\Http\Requests\StudentRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(StudentRequest $request): JsonResponse
     {
@@ -105,11 +102,10 @@ class StudentController extends Controller
 
     /**
      * Show Edit Student Form
-     *
-     * @param integer $id
-     * @return void
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(int $id)
+    public function edit(int $id): JsonResponse
     {
         try {
             $student = $this->_studentService->getStudentById($id);
@@ -164,11 +160,10 @@ class StudentController extends Controller
 
     /**
      * Destroy Student
-     *
-     * @param integer $id
-     * @return void
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(int $id)
+    public function destroy(int $id): JsonResponse
     {
         try {
             $this->_studentService->deletestudent($id);

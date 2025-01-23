@@ -29,7 +29,9 @@ class MajorRepository implements MajorRepositoryInterface
     public function createMajor(string $name): void
     {
         $major = new Major();
+
         $major->name = $name;
+
         $major->save();
     }
 

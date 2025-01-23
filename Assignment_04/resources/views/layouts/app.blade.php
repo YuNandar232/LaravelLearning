@@ -29,12 +29,12 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <!-- Majors Nav Item -->
-                    <li class="nav-item {{ request()->routeIs('majors*') ? 'active-nav' : '' }}">
+                    <li class="nav-item {{ request()->routeIs('major*') ? 'active-nav' : '' }}">
                         <a class="nav-link" href="{{ route('major.index') }}">Majors</a>
                     </li>
 
                     <!-- Students Nav Item -->
-                    <li class="nav-item {{ request()->routeIs('students*') ? 'active-nav' : '' }}">
+                    <li class="nav-item {{ request()->routeIs('student*') ? 'active-nav' : '' }}">
                         <a class="nav-link" href="{{ route('student.index') }}">Students</a>
                     </li>
                 </ul>

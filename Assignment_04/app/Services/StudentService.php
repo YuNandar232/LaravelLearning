@@ -42,21 +42,20 @@ class StudentService implements StudentServiceInterface
 
     /**
      * Create a new student.
-     * @param array $student_data
+     * @param array $studentData
      * @return void
      */
-    public function createStudent(array $student_data): void
+    public function createStudent(array $studentData): void
     {
-        $this->_studentRepository->createStudent($student_data);
+        $this->_studentRepository->createStudent($studentData);
     }
 
     /**
-     * Get Student ById
-     *
-     * @param integer $id
-     * @return void
+     * Get Student By Id
+     * @param int $id
+     * @return mixed
      */
-    public function getStudentById(int $id)
+    public function getStudentById(int $id): mixed
     {
         return $this->_studentRepository->getStudentById($id);
     }
@@ -65,12 +64,12 @@ class StudentService implements StudentServiceInterface
      * Update Student
      *
      * @param integer $id
-     * @param array $student_data
+     * @param array $studentData
      * @return void
      */
-    public function updatestudent(int $id, array $student_data): void
+    public function updatestudent(int $id, array $studentData): void
     {
-        $this->_studentRepository->updateStudent($id, $student_data);
+        $this->_studentRepository->updateStudent($id, $studentData);
     }
 
     /**
@@ -91,7 +90,7 @@ class StudentService implements StudentServiceInterface
      * @param  \Illuminate\Http\UploadedFile $file
      * @return void
      */
-    public function validateFile($file)
+    public function validateFile($file): void
     {
         if (!in_array($file->getClientOriginalExtension(), ['xlsx', 'xls', 'csv'])) {
             throw ValidationException::withMessages(
@@ -101,7 +100,7 @@ class StudentService implements StudentServiceInterface
             );
         }
 
-        if ($file->getSize() > 10240 * 1024) {
+        if ($file->getSize() > 10 * 1024 * 1024) {
             throw ValidationException::withMessages(
                 [
                     'file' => 'File size exceeds the maximum allowed size of 10MB.'
@@ -126,7 +125,7 @@ class StudentService implements StudentServiceInterface
      * @param  \Illuminate\Http\UploadedFile $file
      * @return array
      */
-    public function validateHeaders($file)
+    public function validateHeaders($file): array
     {
         $headingRowImport = new HeadingRowImport();
         $headings = $headingRowImport->toArray($file)[0][0];
@@ -153,7 +152,7 @@ class StudentService implements StudentServiceInterface
      * @param  \Illuminate\Http\UploadedFile $file
      * @return void
      */
-    public function importStudents($file)
+    public function importStudents($file): void
     {
         Excel::import(new StudentsImport(), $file);
     }

@@ -34,10 +34,9 @@ class MajorController extends Controller
 
     /**
      * Display a listing of the majors.
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         return view('Major.list');
     }
@@ -47,10 +46,11 @@ class MajorController extends Controller
      *
      * @return JsonResponse
      */
-    public function fetchMajors()
+    public function fetchMajors(): JsonResponse
     {
         try {
             $majors = $this->_majorService->getAllMajors();
+
             return response()->json(['majors' => $majors]);
         } catch (\Exception $e) {
             return response()->json(
@@ -64,14 +64,14 @@ class MajorController extends Controller
 
     /**
      * Store Major
-     *
-     * @param  MajorRequest $request
-     * @return RedirectResponse
+     * @param \App\Http\Requests\MajorRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(MajorRequest $request): JsonResponse
     {
         try {
             $this->_majorService->createMajor($request->name);
+
             return response()->json(
                 [
                     'status' => 200,
@@ -91,11 +91,10 @@ class MajorController extends Controller
 
     /**
      * Edit Major
-     *
-     * @param integer $id
-     * @return void
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(int $id)
+    public function edit(int $id): JsonResponse
     {
         try {
             $major = $this->_majorService->getMajorById($id);
@@ -118,10 +117,9 @@ class MajorController extends Controller
 
     /**
      * Update Major
-     *
-     * @param  MajorRequest $request
-     * @param  [int]        $id
-     * @return RedirectResponse
+     * @param \App\Http\Requests\MajorUpdateRequest $request
+     * @param mixed $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(MajorUpdateRequest $request, $id): JsonResponse
     {
@@ -147,12 +145,10 @@ class MajorController extends Controller
 
     /**
      * Destory Major
-     *
      * @param int $id
-     *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(int $id)
+    public function destroy(int $id): JsonResponse
     {
         $majorInUse = \App\Models\Student::where('major_id', $id)->exists();
 

@@ -17,11 +17,11 @@ class MajorsImport implements ToModel, WithHeadingRow, WithValidation
     protected $failures = [];
 
     /**
+     * Marjor Model
      * @param array $row
-     *
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * @return \App\Models\Major
      */
-    public function model(array $row)
+    public function model(array $row): Major
     {
         return new Major(
             [

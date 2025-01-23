@@ -23,18 +23,18 @@ class StudentRepository implements StudentRepositoryInterface
     /**
      * Create student
      *
-     * @param  array $student_data
+     * @param  array $studentData
      * @return void
      */
-    public function createStudent(array $student_data): void
+    public function createStudent(array $studentData): void
     {
         Student::create(
             [
-                'name' => $student_data['name'],
-                'major_id' => $student_data['major_id'],
-                'phone' => $student_data['phone'],
-                'email' => $student_data['email'],
-                'address' => $student_data['address'],
+                'name' => $studentData['name'],
+                'major_id' => $studentData['major_id'],
+                'phone' => $studentData['phone'],
+                'email' => $studentData['email'],
+                'address' => $studentData['address'],
             ]
         );
     }
@@ -54,19 +54,20 @@ class StudentRepository implements StudentRepositoryInterface
      * Update Student
      *
      * @param integer $id
-     * @param array $student_data
+     * @param array $studentData
      * @return void
      */
-    public function updateStudent(int $id, array $student_data): void
+    public function updateStudent(int $id, array $studentData): void
     {
         $student = Student::findOrFail($id);
+
         $student->update(
             [
-                'name' => $student_data['name'],
-                'major_id' => $student_data['major_id'],
-                'phone' => $student_data['phone'],
-                'email' => $student_data['email'],
-                'address' => $student_data['address'],
+                'name' => $studentData['name'],
+                'major_id' => $studentData['major_id'],
+                'phone' => $studentData['phone'],
+                'email' => $studentData['email'],
+                'address' => $studentData['address'],
             ]
         );
     }

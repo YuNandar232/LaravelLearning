@@ -54,11 +54,10 @@ class MajorService implements MajorServiceInterface
 
     /**
      * Get Major By Id
-     *
-     * @param integer $id
-     * @return void
+     * @param int $id
+     * @return mixed
      */
-    public function getMajorById(int $id)
+    public function getMajorById(int $id): mixed
     {
         return $this->_majorRepository->getMajorById($id);
     }
@@ -101,8 +100,12 @@ class MajorService implements MajorServiceInterface
             );
         }
 
-        if ($file->getSize() > 10240 * 1024) {
-            throw ValidationException::withMessages(['file' => 'File size exceeds the maximum allowed size of 10MB.']);
+        if ($file->getSize() > 10 * 1024 * 1024) {
+            throw ValidationException::withMessages(
+                [
+                    'file' => 'File size exceeds the maximum allowed size of 10MB.'
+                ]
+            );
         }
 
         $wrongHeaders = $this->validateHeaders($file);
@@ -122,7 +125,7 @@ class MajorService implements MajorServiceInterface
      * @param  \Illuminate\Http\UploadedFile $file
      * @return array
      */
-    public function validateHeaders($file)
+    public function validateHeaders($file): array
     {
         $headingRowImport = new HeadingRowImport();
         $headings = $headingRowImport->toArray($file)[0][0];
@@ -143,7 +146,7 @@ class MajorService implements MajorServiceInterface
      * @param  \Illuminate\Http\UploadedFile $file
      * @return void
      */
-    public function importMajors($file)
+    public function importMajors($file): void
     {
         Excel::import(new MajorsImport(), $file);
     }

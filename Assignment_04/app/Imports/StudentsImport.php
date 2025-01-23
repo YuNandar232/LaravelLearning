@@ -18,9 +18,10 @@ class StudentsImport implements ToModel, WithHeadingRow, WithValidation
      * @param array $row
      * @return Student
      */
-    public function model(array $row)
+    public function model(array $row): Student
     {
         $major = Major::where('name', $row['major'])->first();
+
         return new Student(
             [
             'name'     => $row['student'],
