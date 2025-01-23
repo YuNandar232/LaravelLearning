@@ -1,13 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Services\MajorServiceInterface;
-use App\Http\Requests\MajorRequest;
-use Illuminate\Http\RedirectResponse;
+
 use App\Exports\MajorsExport;
-use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\View\View;
+use App\Http\Requests\MajorRequest;
+use App\Http\Requests\MajorUpdateRequest;
+use App\Services\MajorServiceInterface;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 /**
  * Major Controller
@@ -17,7 +20,7 @@ class MajorController extends Controller
     /**
      * @var MajorServiceInterface
      */
-    private $majorService;
+    private $_majorService;
 
     /**
      * Major Controller constructor.
@@ -26,7 +29,7 @@ class MajorController extends Controller
      */
     public function __construct(MajorServiceInterface $majorService)
     {
-        $this->majorService = $majorService;
+        $this->_majorService = $majorService;
     }
 
     /**
@@ -34,61 +37,112 @@ class MajorController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function index(): View
+    public function index()
     {
-        return view('Major.list', [
-            'majors' => $this->majorService->getAllMajors(),
-        ]);
+        return view('Major.list');
     }
- 
+
     /**
-     * Create
+     * Fetch all majors (AJAX request).
      *
-     * @return View
+     * @return JsonResponse
      */
-    public function create(): View
+    public function fetchMajors()
     {
-        return view('Major.create'); // Make sure this points to the correct blade view
+        try {
+            $majors = $this->_majorService->getAllMajors();
+            return response()->json(['majors' => $majors]);
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'error_message' => 'Error occurred while fetching majors.',
+                ],
+                500
+            );
+        }
     }
 
     /**
      * Store Major
      *
-     * @param MajorRequest $request
+     * @param  MajorRequest $request
      * @return RedirectResponse
      */
-    public function store(MajorRequest $request): RedirectResponse
+    public function store(MajorRequest $request): JsonResponse
     {
-        $this->majorService->createMajor($request->name);
-        
-        return redirect()->route('majors.index');
+        try {
+            $this->_majorService->createMajor($request->name);
+            return response()->json(
+                [
+                    'status' => 200,
+                    'message' => 'Major created successfully!',
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Error occurred while creating major.',
+                ],
+                500
+            );
+        }
     }
 
     /**
      * Edit Major
      *
-     * @param [int] $id
-     * @return View
+     * @param integer $id
+     * @return void
      */
-    public function edit($id): View
+    public function edit(int $id)
     {
-        $major = $this->majorService->getMajorById($id); // Get the major by its ID
-        
-        return view('Major.edit', compact('major'));
+        try {
+            $major = $this->_majorService->getMajorById($id);
+
+            return response()->json(
+                [
+                    'status' => 200,
+                    'major' => $major,
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'status' => 404,
+                    'message' => 'Major not found'
+                ]
+            );
+        }
     }
 
     /**
      * Update Major
      *
-     * @param MajorRequest $request
-     * @param [int] $id
+     * @param  MajorRequest $request
+     * @param  [int]        $id
      * @return RedirectResponse
      */
-    public function update(MajorRequest $request, $id): RedirectResponse
+    public function update(MajorUpdateRequest $request, $id): JsonResponse
     {
-        $this->majorService->updateMajor($id, $request->name);
-        
-        return redirect()->route('majors.index');
+        try {
+            $this->_majorService->updateMajor($id, $request->name);
+
+            return response()->json(
+                [
+                    'status' => 200,
+                    'message' => 'Major updated successfully!',
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Error occurred while updating the major.',
+                ],
+                500
+            );
+        }
     }
 
     /**
@@ -98,53 +152,26 @@ class MajorController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(int $id): RedirectResponse
+    public function destroy(int $id)
     {
-        // Check if any students are using this major
         $majorInUse = \App\Models\Student::where('major_id', $id)->exists();
 
         if ($majorInUse) {
-            // If the major is being used by students, return with an error message
-            return redirect()->route('majors.index')->with('error', 'Cannot delete this major, it is assigned to students.');
+            return response()->json(
+                [
+                    'message' => 'Cannot delete this major, 
+                    it is assigned to students.',
+                ]
+            );
         }
 
-        $this->majorService->deletemajor($id);
-        
-        return redirect()->route('majors.index');
-    }
+        $this->_majorService->deletemajor($id);
 
-    /**
-     * Import Majors
-     *
-     * @return void
-     */
-    public function import(Request  $request)
-    {
-        try {
-            // Validate the file using the service
-            $this->majorService->validateFile($request->file('file'));
-
-            // If validation passes, perform the import
-            $this->majorService->importMajors($request->file('file'));
-
-            return back()->with('success', 'File imported successfully!');
-
-        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-             // Get the validation failures
-             $failures = $e->failures();
-             
-              // Redirect back with errors in session using the Session facade
-              return back()->withErrors($failures);
-        }
-    }
-
-    /**
-     * Export Majors
-     *
-     * @return void
-     */
-    public function export() 
-    {
-        return Excel::download(new MajorsExport, 'majors.xlsx');
+        return response()->json(
+            [
+                'status' => 200,
+                'message' => 'Major deleted successfully!',
+            ]
+        );
     }
 }

@@ -1,16 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Services\StudentServiceInterface;
+
+use App\Exports\StudentsExport;
 use App\Http\Requests\StudentRequest;
 use App\Models\Major;
-use App\Exports\StudentsExport;
-use App\Imports\StudentsImport;
+use App\Services\StudentServiceInterface;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Http\Request;
-use Maatwebsite\Excel\HeadingRowImport;
 
 /**
  * Student Controller
@@ -20,7 +20,7 @@ class StudentController extends Controller
     /**
      * @var StudentServiceInterface
      */
-     private $studentService;
+    private $_studentService;
 
     /**
      * StudentController constructor.
@@ -29,7 +29,7 @@ class StudentController extends Controller
      */
     public function __construct(StudentServiceInterface $studentService)
     {
-        $this->studentService = $studentService;
+        $this->_studentService = $studentService;
     }
 
     /**
@@ -39,9 +39,28 @@ class StudentController extends Controller
      */
     public function index(): View
     {
-        return view('Student.list', [
-            'students' => $this->studentService->getAllStudents(),
-        ]);
+        return view('Student.list');
+    }
+
+    /**
+     * Fetch all students (AJAX request).
+     *
+     * @return JsonResponse
+     */
+    public function fetchStudents()
+    {
+        try {
+            $students = $this->_studentService->getAllStudents();
+
+            return response()->json(['students' => $students]);
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'error_message' => 'Error occurred while fetching students.',
+                ],
+                500
+            );
+        }
     }
 
     /**
@@ -49,105 +68,124 @@ class StudentController extends Controller
      *
      * @return View
      */
-    public function create(): View
+    public function create()
     {
-         // Fetch all majors to pass to the view
-         $majors = Major::all(); // Assuming you have a Major model
+        $majors = Major::all();
 
-         return view('Student.create', compact('majors')); 
+        return response()->json(['majors' => $majors]);
     }
 
     /**
-     * Store Student.
+     * Store Student
      *
-     * @param \Illuminate\Http\Requests\StudentRequest $request
-     *
-     * @return \Illuminate\Http\RedirectResponse
+     * @param StudentRequest $request
+     * @return JsonResponse
      */
-    public function store(StudentRequest $request): RedirectResponse
+    public function store(StudentRequest $request): JsonResponse
     {
-        $this->studentService->createStudent($request->all());
+        try {
+            $this->_studentService->createStudent($request->all());
 
-        return redirect()->route('students.index');
-
+            return response()->json(
+                [
+                    'status' => 200,
+                    'message' => 'Student created successfully!',
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Error occurred while creating student.',
+                ],
+                500
+            );
+        }
     }
 
     /**
      * Show Edit Student Form
      *
-     * @param [type] $id
-     * @return View
+     * @param integer $id
+     * @return void
      */
-    public function edit($id): View
+    public function edit(int $id)
     {
-        $student = $this->studentService->getStudentById($id); // Get the student by its ID
+        try {
+            $student = $this->_studentService->getStudentById($id);
 
-        $majors = Major::all(); // Fetch all majors for the dropdown
+            $majors = Major::all();
 
-        return view('Student.edit', compact('student', 'majors'));
+            return response()->json(
+                [
+                    'status' => 200,
+                    'majors' => $majors,
+                    'student' => $student,
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'status' => 404,
+                    'message' => 'Student not found'
+                ]
+            );
+        }
     }
 
     /**
      * Update Student
      *
      * @param StudentRequest $request
-     * @param [type] $id
-     * @return RedirectResponse
+     * @param integer $id
+     * @return JsonResponse
      */
-    public function update(StudentRequest $request, $id): RedirectResponse
+    public function update(StudentRequest $request, int $id): JsonResponse
     {
-        $this->studentService->updateStudent($id, $request->all());
+        try {
+            $this->_studentService->updateStudent($id, $request->all());
 
-        return redirect()->route('students.index');
+            return response()->json(
+                [
+                    'status' => 200,
+                    'message' => 'Student updated successfully!',
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Error occurred while updating the student.',
+                ],
+                500
+            );
+        }
     }
 
     /**
      * Destroy Student
      *
-     * @param int $id
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function destroy(int $id): RedirectResponse
-    {
-        $this->studentService->deletestudent($id);
-
-        return redirect()->route('students.index');
-    }
-
-     /**
-      * Export Students
-      *
-      * @return void
-      */
-    public function export() 
-    {
-        return Excel::download(new StudentsExport, 'students.xlsx');
-    }
-
-    /**
-     * Import Students
-     *
-     * @param Request $request
+     * @param integer $id
      * @return void
      */
-    public function import(Request $request)
+    public function destroy(int $id)
     {
         try {
-            // Validate the file using the service
-            $this->studentService->validateFile($request->file('file'));
+            $this->_studentService->deletestudent($id);
 
-            // If validation passes, perform the import
-            $this->studentService->importStudents($request->file('file'));
-
-            return back()->with('success', 'File imported successfully!');
-
-        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-             // Get the validation failures
-             $failures = $e->failures();
-             
-              // Redirect back with errors in session using the Session facade
-              return back()->withErrors($failures);
+            return response()->json(
+                [
+                    'status' => 200,
+                    'message' => 'Student deleted successfully!',
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'status' => 404,
+                    'message' => 'Student not found'
+                ]
+            );
         }
     }
 }

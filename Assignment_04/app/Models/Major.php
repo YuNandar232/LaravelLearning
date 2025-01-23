@@ -11,13 +11,11 @@ class Major extends Model
 {
     protected $table = 'majors';
 
-    // Allow mass assignment for the 'name' column
     protected $fillable = ['name'];
 
     /**
      * Students
-     *
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function students()
     {

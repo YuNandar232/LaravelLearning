@@ -12,15 +12,16 @@ class Student extends Model
     protected $table = 'students';
 
     protected $fillable = [
-        'name', 
-        'major_id', 
-        'phone', 
+        'name',
+        'major_id',
+        'phone',
         'email',
-        'address'
-        ];
-        
+        'address',
+    ];
+
     /**
-     * Get the major that the student belongs to.
+     *  Get the major that the student belongs to.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function major()
     {

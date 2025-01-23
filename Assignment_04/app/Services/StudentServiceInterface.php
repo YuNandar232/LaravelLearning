@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 /**
@@ -19,6 +20,6 @@ interface StudentServiceInterface
     public function validateFile($file);
 
     public function validateHeaders($file);
-    
+
     public function importStudents($file);
 }

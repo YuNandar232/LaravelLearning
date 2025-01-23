@@ -7,13 +7,12 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-
 use Illuminate\Support\Collection;
 
 /**
  * Major Import
  */
-class MajorsImport implements ToModel,  WithHeadingRow , WithValidation
+class MajorsImport implements ToModel, WithHeadingRow, WithValidation
 {
     protected $failures = [];
 
@@ -24,20 +23,21 @@ class MajorsImport implements ToModel,  WithHeadingRow , WithValidation
      */
     public function model(array $row)
     {
-        return new Major([
+        return new Major(
+            [
             'name' => $row['name'],
-        ]);
+            ]
+        );
     }
 
+
     /**
-     * Validation
-     *
-     * @return response()
+     *  Validation
+     * @return array
      */
     public function rules(): array
     {
         return [
-             // Above is alias for as it always validates in batches
              '*.name' => 'required|max:255|unique:majors,name',
         ];
     }

@@ -4,6 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * StudentRequest
+ */
 class StudentRequest extends FormRequest
 {
     /**
@@ -23,9 +26,10 @@ class StudentRequest extends FormRequest
     {
         return [
             'name' => 'required|max:255',
-            'major_id' => 'required|exists:majors,id', // Validating that major_id exists in majors table
-            'phone' => 'max:15',
+            'major_id' => 'required|exists:majors,id',
+            'phone' => 'required|max:15',
             'email' => 'email|max:100',
+            'address' => 'required|max:255',
         ];
     }
 }

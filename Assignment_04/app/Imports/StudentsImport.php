@@ -11,24 +11,25 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 /**
  * StudentsImport
  */
-class StudentsImport implements ToModel , WithHeadingRow , WithValidation
+class StudentsImport implements ToModel, WithHeadingRow, WithValidation
 {
     /**
      * Student Model
-     *
      * @param array $row
-     * @return void
+     * @return Student
      */
     public function model(array $row)
     {
         $major = Major::where('name', $row['major'])->first();
-        return new Student([
+        return new Student(
+            [
             'name'     => $row['student'],
-            'major_id' => $major->id, 
+            'major_id' => $major->id,
             'phone'    => $row['phone'],
             'email'    => $row['email'],
             'address'  => $row['address'],
-         ]);
+            ]
+        );
     }
 
     /**

@@ -1,12 +1,14 @@
 <?php
+
 namespace App\Services;
+
+use App\Imports\StudentsImport;
 use App\Repositories\StudentRepositoryInterface;
 use App\Services\StudentServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\HeadingRowImport;
-use App\Imports\StudentsImport;
 
 /**
  * Student Service
@@ -16,16 +18,16 @@ class StudentService implements StudentServiceInterface
     /**
      * @var StudentRepositoryInterface
      */
-    private $studentRepository;
+    private $_studentRepository;
 
     /**
-     * studentService constructor.
+     * StudentService constructor.
      *
      * @param StudentRepositoryInterface $studentRepository
      */
     public function __construct(StudentRepositoryInterface $studentRepository)
     {
-        $this->studentRepository = $studentRepository;
+        $this->_studentRepository = $studentRepository;
     }
 
     /**
@@ -35,19 +37,17 @@ class StudentService implements StudentServiceInterface
      */
     public function getAllStudents(): Collection
     {
-        return $this->studentRepository->getAllStudents();
+        return $this->_studentRepository->getAllStudents();
     }
 
     /**
      * Create a new student.
-     * 
-     * @param string $name
-     * 
+     * @param array $student_data
      * @return void
      */
     public function createStudent(array $student_data): void
     {
-        $this->studentRepository->createStudent($student_data);
+        $this->_studentRepository->createStudent($student_data);
     }
 
     /**
@@ -58,7 +58,7 @@ class StudentService implements StudentServiceInterface
      */
     public function getStudentById(int $id)
     {
-        return $this->studentRepository->getStudentById($id);
+        return $this->_studentRepository->getStudentById($id);
     }
 
     /**
@@ -70,19 +70,19 @@ class StudentService implements StudentServiceInterface
      */
     public function updatestudent(int $id, array $student_data): void
     {
-        $this->studentRepository->updateStudent($id, $student_data);
+        $this->_studentRepository->updateStudent($id, $student_data);
     }
-    
+
     /**
      * Delete a student by ID.
-     * 
+     *
      * @param int $id
-     * 
+     *
      * @return void
      */
     public function deleteStudent(int $id): void
     {
-        $this->studentRepository->deleteStudent($id);
+        $this->_studentRepository->deleteStudent($id);
     }
 
     /**
@@ -93,20 +93,30 @@ class StudentService implements StudentServiceInterface
      */
     public function validateFile($file)
     {
-        // Validate file type and size manually
         if (!in_array($file->getClientOriginalExtension(), ['xlsx', 'xls', 'csv'])) {
-            throw ValidationException::withMessages(['file' => 'Invalid file type. Only XLSX, XLS, and CSV are allowed.']);
+            throw ValidationException::withMessages(
+                [
+                    'file' => 'Invalid file type.Only XLSX, XLS,and CSV are allowed.'
+                ]
+            );
         }
 
-        if ($file->getSize() > 10240 * 1024) {  // 10MB
-            throw ValidationException::withMessages(['file' => 'File size exceeds the maximum allowed size of 10MB.']);
+        if ($file->getSize() > 10240 * 1024) {
+            throw ValidationException::withMessages(
+                [
+                    'file' => 'File size exceeds the maximum allowed size of 10MB.'
+                ]
+            );
         }
 
-        // Validate headers
         $wrongHeaders = $this->validateHeaders($file);
 
         if (!empty($wrongHeaders)) {
-            throw ValidationException::withMessages(['file' => 'Invalid headers: ' . implode(', ', $wrongHeaders)]);
+            throw ValidationException::withMessages(
+                [
+                    'file' => 'Invalid headers: ' . implode(', ', $wrongHeaders)
+                ]
+            );
         }
     }
 
@@ -119,21 +129,19 @@ class StudentService implements StudentServiceInterface
     public function validateHeaders($file)
     {
         $headingRowImport = new HeadingRowImport();
-        $headings = $headingRowImport->toArray($file)[0][0]; // Get the first row (headers)
+        $headings = $headingRowImport->toArray($file)[0][0];
 
         $expectedHeaders = [
             'student',
             'major',
             'phone',
             'email',
-            'address'
-            ];
+            'address',
+        ];
 
-        // Normalize headers for case-insensitive comparison
         $normalizedHeadings = array_map('strtolower', $headings);
         $normalizedExpectedHeaders = array_map('strtolower', $expectedHeaders);
 
-        // Identify any mismatched headers
         $wrongHeaders = array_diff($normalizedHeadings, $normalizedExpectedHeaders);
 
         return $wrongHeaders;

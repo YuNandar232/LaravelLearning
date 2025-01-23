@@ -1,131 +1,97 @@
 @extends('layouts.app')
 
 @section('content')
-    <!-- Display Success Message -->
-    <div class="container">
-        @if (session('success'))
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <div class="alert alert-success">
-                        {{ session('success') }}
-                    </div>
-                </div>
-            </div>
-        @endif
-
-        <!-- Display Error Message -->
-        @if ($errors->any())
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        @endif
-    </div>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
+                <div id="success_message"></div>
                 <div class="card">
-                    <div class="card-header">
-                        Major List
-                    </div>
+                    <div class="card-header">Major List</div>
                     <div class="card-body">
-                        <!-- Buttons Section -->
-                        <div class="d-flex justify-content-between mb-4">
-                            <!-- Align Import and Export to the left, Add Major to the right -->
-                            <!--<div>
-                                <button type="button" class="btn btn-primary ml-2" data-bs-toggle="modal"
-                                    data-bs-target="#importModal">
-                                    <i class="fa fa-file"></i> Import
-                                </button>
-                                <a href="{{ route('majors.export') }}" class="btn btn-primary">
-                                    <i class="fa fa-download"></i> Export
-                                </a>
-                            </div>-->
-                            <a href="{{ route('majors.create') }}" class="btn btn-primary">
-                                <i class="fa fa-btn fa-plus"></i> Add
-                            </a>
-                        </div>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AddMajorModal">
+                            <i class="fa fa-btn fa-plus"></i> Add
+                        </button>
 
-                        <!-- Modal for Import File -->
-                        <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel"
-                            aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="importModalLabel">Import Excel File</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <!-- Import Form Section -->
-                                        <form action="{{ route('majors.import') }}" method="POST"
-                                            enctype="multipart/form-data">
-                                            @csrf
-                                            <div class="form-group">
-                                                <input type="file" name="file" class="form-control" required>
-                                            </div>
-                                            <br>
-                                            <button type="submit" class="btn btn-primary">
-                                                Submit
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <table class="table table-striped" id="majorsTable">
+                            <thead>
+                                <tr>
+                                    <th class="w-50">Major Name</th>
+                                    <th class="text-end"></th>
+                                    <th class="text-end"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-
-                        <!-- Display Major List -->
-                        @if (count($majors) > 0)
-                            <table class="table table-striped">
-                                <thead>
-                                    <th style="width: 70%;">Major Name</th>
-                                    <th style="width: 15%;">&nbsp;</th>
-                                    <th style="width: 15%;">&nbsp;</th>
-                                </thead>
-                                <tbody>
-                                    @foreach ($majors as $major)
-                                        <tr>
-                                            <td>{{ $major->name }}</td>
-                                            <td>
-                                                <!-- Edit Button -->
-                                                <a href="{{ route('majors.edit', $major->id) }}"
-                                                    class="btn btn-primary d-flex justify-content-center align-items-center">
-                                                    <i class="fa fa-btn fa-edit"></i>Edit
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <!-- Delete Button (using an anchor tag for deletion) -->
-                                                 <a href="{{ route('majors.destroy', $major->id) }}"
-                                                 class="btn btn-danger d-flex justify-content-center align-items-center btn-delete-major"
-                                                 data-form-id="delete-form-{{ $major->id }}">
-                                                 <i class="fa fa-btn fa-trash"></i>Delete
-                                                 </a>
-
-                                                <!-- Hidden form for delete action -->
-                                                <form id="delete-form-{{ $major->id }}"
-                                                    action="{{ route('majors.destroy', $major->id) }}" method="POST"
-                                                    style="display: none;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        @endif
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Delete Major</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete 【<span id="delete_major_name"></span>】?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('scripts')
+    @include('Major.create_modal')
+    @include('Major.edit_modal')
+    <script>
+        $(document).ready(function() {
+
+            fetchmajor();
+
+            function fetchmajor() {
+                $.ajax({
+                    type: "GET",
+                    url: "/fetch_majors",
+                    dataType: "json",
+                    success: function(response) {
+                        $('tbody').html("");
+                        $.each(response.majors, function(key, item) {
+                            $('tbody').append('<tr>\
+                                        <td>' + item.name + '</td>\
+                                        <td class="text-end"><button type="button" value="' + item.id + '" class="btn btn-primary editbtn btn-sm"> <i class="fa fa-btn fa-edit"></i>Edit</button></td>\
+                                        <td class="text-end"><button type="button" value="' + item.id + '" class="btn btn-danger deletebtn btn-sm"> <i class="fa fa-btn fa-trash"></i>Delete</button></td>\
+                                    \</tr>');
+
+                        });
+                    }
+                });
+            }
+
+            $(document).on('click', '.editbtn', function(e) {
+                e.preventDefault();
+                var major_id = $(this).val();
+                $.ajax({
+                    type: "GET",
+                    url: "/major/" + major_id + "/edit",
+                    success: function(response) {
+                        $('#major_name').val(response.major.name);
+                        $('#major_id').val(major_id);
+                        $('#editMajorModal').modal('show');
+                    }
+                });
+                $('.btn-close').find('input').val('');
+
+            });
+        });
+    </script>
 @endsection
