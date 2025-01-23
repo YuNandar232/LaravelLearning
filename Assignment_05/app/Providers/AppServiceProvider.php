@@ -3,7 +3,10 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-
+use App\Services\MajorService;
+use App\Services\MajorServiceInterface;
+use App\Services\StudentService;
+use App\Services\StudentServiceInterface;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -11,7 +14,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(MajorServiceInterface::class, MajorService::class);
+        $this->app->singleton(StudentServiceInterface::class, StudentService::class);
     }
 
     /**
