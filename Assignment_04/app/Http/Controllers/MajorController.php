@@ -118,10 +118,10 @@ class MajorController extends Controller
     /**
      * Update Major
      * @param \App\Http\Requests\MajorUpdateRequest $request
-     * @param mixed $id
+     * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(MajorUpdateRequest $request, $id): JsonResponse
+    public function update(MajorUpdateRequest $request, int $id): JsonResponse
     {
         try {
             $this->_majorService->updateMajor($id, $request->name);
