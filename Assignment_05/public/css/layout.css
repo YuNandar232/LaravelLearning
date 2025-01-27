@@ -1,0 +1,22 @@
+body {
+    font-family: "Noto Sans", sans-serif;
+}
+.navbar-nav .nav-item {
+    margin-right: 15px;
+}
+.fa-btn {
+    margin-right: 6px;
+}
+ul {
+    margin-bottom: 0px;
+}
+.container {
+    margin-top: 30px;
+}
+.active-nav {
+    color: rgb(3, 52, 120);
+    font-weight: bold;
+}
+.active-nav:hover {
+    color: #004085;
+}
