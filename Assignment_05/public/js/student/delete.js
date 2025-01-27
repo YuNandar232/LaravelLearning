@@ -1,20 +1,24 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Find all delete buttons
-    const deleteButtons = document.querySelectorAll('.btn-delete-student');
+document.addEventListener("DOMContentLoaded", function () {
+    const deleteButtons = document.querySelectorAll(".btn-delete-student");
 
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();  // Prevent default anchor action
-            
-            // Confirm before submitting
-            const confirmDelete = confirm('Are you sure you want to delete this student?');
-            
-            if (confirmDelete) {
-                // Find the corresponding form ID and submit it
-                const formId = button.getAttribute('data-form-id');
-                const form = document.getElementById(formId);
-                form.submit();
+    deleteButtons.forEach((button) => {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            const studentName = button.getAttribute("data-student-name");
+            const formAction = button.getAttribute("data-action");
+
+            document.getElementById("delete_student_name").innerText =
+                studentName;
+
+            const modalForm = document.querySelector(
+                "#studentdeleteModal form"
+            );
+            if (modalForm) {
+                modalForm.setAttribute("action", formAction);
             }
+
+            $("#studentdeleteModal").modal("show");
         });
     });
 });

@@ -1,23 +1,31 @@
 <?php
+
 namespace App\Services;
+
 use App\Repositories\MajorRepositoryInterface;
 use App\Services\MajorServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
+
+/**
+ * Summary of MajorService
+ */
 class MajorService implements MajorServiceInterface
 {
     /**
      * @var MajorRepositoryInterface
      */
-    private $majorRepository;
+    private $_majorRepository;
+
     /**
-     * majorService constructor.
+     * MajorService constructor.
      *
-     * @param MajorRepositoryInterface $majorRepository
+     * @param \App\Repositories\MajorRepositoryInterface $majorRepository
      */
     public function __construct(MajorRepositoryInterface $majorRepository)
     {
-        $this->majorRepository = $majorRepository;
+        $this->_majorRepository = $majorRepository;
     }
+
     /**
      * Get all majors.
      *
@@ -25,36 +33,50 @@ class MajorService implements MajorServiceInterface
      */
     public function getAllMajors(): Collection
     {
-        return $this->majorRepository->getAllMajors();
+        return $this->_majorRepository->getAllMajors();
     }
+
     /**
-     * Create a new major.
-     * 
-     * @param string $name
-     * 
+     * Create Major
+     *
+     * @param  string $name
      * @return void
      */
     public function createMajor(string $name): void
     {
-        $this->majorRepository->createMajor($name);
+        $this->_majorRepository->createMajor($name);
     }
+
+    /**
+     * Get Major By Id
+     *
+     * @param int $id
+     */
     public function getMajorById(int $id)
     {
-        return $this->majorRepository->getMajorById($id);
+        return $this->_majorRepository->getMajorById($id);
     }
+
+    /**
+     * Update Major
+     *
+     * @param  int    $id
+     * @param  string $name
+     * @return void
+     */
     public function updateMajor(int $id, string $name): void
     {
-        $this->majorRepository->updateMajor($id,$name);
+        $this->_majorRepository->updateMajor($id, $name);
     }
+
     /**
-     * Delete a major by ID.
-     * 
-     * @param int $id
-     * 
+     * Delete a major by ID
+     *
+     * @param  int $id
      * @return void
      */
     public function deleteMajor(int $id): void
     {
-        $this->majorRepository->deleteMajor($id);
+        $this->_majorRepository->deleteMajor($id);
     }
 }

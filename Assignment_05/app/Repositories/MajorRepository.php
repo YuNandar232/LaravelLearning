@@ -1,7 +1,13 @@
 <?php
+
 namespace App\Repositories;
+
 use App\Models\Major;
 use Illuminate\Database\Eloquent\Collection;
+
+/**
+ * Summary of MajorRepository
+ */
 class MajorRepository implements MajorRepositoryInterface
 {
     /**
@@ -13,34 +19,52 @@ class MajorRepository implements MajorRepositoryInterface
     {
         return Major::orderBy('created_at', 'asc')->get();
     }
+
     /**
-     * Create Major.
-     * @param string $name
+     * Create Major
+     *
+     * @param  string $name
      * @return void
      */
     public function createMajor(string $name): void
     {
         $major = new Major();
+
         $major->name = $name;
+
         $major->save();
     }
-    public function getMajorById(int $id)
+
+    /**
+     * Get Major by Id
+     * @param int $id
+     * @return TModel
+     */
+    public function getMajorById(int $id): Major
     {
-         return Major::findOrFail($id); // Find the major by ID, will throw an exception if not found
+        return Major::findOrFail($id);
     }
 
+    /**
+     * Update Major
+     *
+     * @param  int    $id
+     * @param  string $name
+     * @return void
+     */
     public function updateMajor(int $id, string $name): void
     {
-         // Find the major by ID
-         $major = Major::findOrFail($id);
-         // Update the name
-         $major->name = $name;
-         // Save the changes to the database
-         $major->save();
+        $major = Major::findOrFail($id);
+
+        $major->name = $name;
+
+        $major->save();
     }
+
     /**
-     * Delete Major.
-     * @param int $id
+     * Delete Major
+     *
+     * @param  int $id
      * @return void
      */
     public function deleteMajor(int $id): void

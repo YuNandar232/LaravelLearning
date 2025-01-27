@@ -4,6 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Summary of MajorRequest
+ */
 class MajorRequest extends FormRequest
 {
     /**
@@ -15,9 +18,9 @@ class MajorRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * Major Validation Rules
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array{name: string}
      */
     public function rules(): array
     {

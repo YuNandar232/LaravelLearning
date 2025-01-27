@@ -1,82 +1,122 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Services\MajorServiceInterface;
 use App\Http\Requests\MajorRequest;
+use App\Http\Requests\MajorUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
+/**
+ * Major Controller
+ */
 class MajorController extends Controller
 {
     /**
      * @var MajorServiceInterface
      */
-    private $majorService;
+    private $_majorService;
+
     /**
-     * MajorController constructor.
+     * MajorController constructor
      *
-     * @param MajorServiceInterface $majorService
+     * @param \App\Services\MajorServiceInterface $majorService
      */
     public function __construct(MajorServiceInterface $majorService)
     {
-        $this->majorService = $majorService;
+        $this->_majorService = $majorService;
     }
+
     /**
      * Display a listing of the majors.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index(): View
     {
-        return view('Major.list', [
-            'majors' => $this->majorService->getAllMajors(),
-        ]);
+        return view(
+            'Major.list',
+            [
+                'majors' => $this->_majorService->getAllMajors(),
+            ]
+        );
     }
+
+    /**
+     * Show major create form
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function create(): View
     {
-        return view('Major.create'); // Make sure this points to the correct blade view
+        return view('Major.create');
     }
+
     /**
-     * Store a newly created task in storage.
+     * Store Major
      *
-     * @param \Illuminate\Http\Requests\TaskRequest $request
-     *
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  \App\Http\Requests\MajorRequest $request
+     * @return RedirectResponse
      */
     public function store(MajorRequest $request): RedirectResponse
     {
-        $this->majorService->createMajor($request->name);
-        return redirect()->route('majors.index');
-    }
-    public function edit($id): View
-    {
-        $major = $this->majorService->getMajorById($id); // Get the major by its ID
-        return view('Major.edit', compact('major'));
-    }
-    // Update the major
-    public function update(MajorRequest $request, $id): RedirectResponse
-    {
-        $this->majorService->updateMajor($id, $request->name);
-        return redirect()->route('majors.index');
+        $this->_majorService->createMajor($request->name);
+
+        return redirect()->route('major.index')
+            ->with('success', 'Major created successfully');
     }
 
     /**
-     * Remove the specified task from storage.
+     * Show major edit form
      *
-     * @param int $id
+     * @param  int $id
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function edit(int $id): View
+    {
+        $major = $this->_majorService->getMajorById($id);
+
+        return view('Major.edit', compact('major'));
+    }
+
+
+    /**
+     * Update major
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  \App\Http\Requests\MajorUpdateRequest $request
+     * @param  int                                   $id
+     * @return RedirectResponse
+     */
+    public function update(MajorUpdateRequest $request, int $id): RedirectResponse
+    {
+        $this->_majorService->updateMajor($id, $request->name);
+
+        return redirect()->route('major.index')
+            ->with('success', 'Major updated successfully');
+    }
+
+    /**
+     * Destroy Major
+     *
+     * @param  int $id
+     * @return RedirectResponse
      */
     public function destroy(int $id): RedirectResponse
     {
-        // Check if any students are using this major
         $majorInUse = \App\Models\Student::where('major_id', $id)->exists();
 
         if ($majorInUse) {
-            // If the major is being used by students, return with an error message
-            return redirect()->route('majors.index')->with('error', 'Cannot delete this major, it is assigned to students.');
+            return redirect()->route('major.index')
+                ->with(
+                    'error',
+                    'Cannot delete this major, it is assigned to students.'
+                );
         }
-        $this->majorService->deletemajor($id);
-        return redirect()->route('majors.index');
+
+        $this->_majorService->deletemajor($id);
+
+        return redirect()->route('major.index')
+            ->with('success', 'Major deleted successfully.');
     }
 }

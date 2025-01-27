@@ -1,20 +1,25 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Services\StudentServiceInterface;
 use App\Http\Requests\StudentRequest;
 use App\Models\Major;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\StudentCreatedMail;
 
-use Illuminate\Http\Request;
-
+/**
+ * Student Controller
+ */
 class StudentController extends Controller
 {
     /**
      * @var StudentServiceInterface
      */
-     private $studentService;
+    private $_studentService;
+
     /**
      * StudentController constructor.
      *
@@ -22,61 +27,93 @@ class StudentController extends Controller
      */
     public function __construct(StudentServiceInterface $studentService)
     {
-        $this->studentService = $studentService;
+        $this->_studentService = $studentService;
     }
+
     /**
      * Display a listing of the students.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index(): View
     {
-        return view('Student.list', [
-            'students' => $this->studentService->getAllStudents(),
-        ]);
+        return view(
+            'Student.list',
+            [
+                'students' => $this->_studentService->getAllStudents(),
+            ]
+        );
     }
+
+    /**
+     * Show Student Create Form
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function create(): View
     {
-         // Fetch all majors to pass to the view
-         $majors = Major::all(); // Assuming you have a Major model
+        $majors = Major::all();
 
-         return view('Student.create', compact('majors')); 
+        return view('Student.create', compact('majors'));
     }
+
     /**
-     * Store a newly created student in storage.
+     * Store Student
      *
-     * @param \Illuminate\Http\Requests\StudentRequest $request
-     *
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  \App\Http\Requests\StudentRequest $request
+     * @return RedirectResponse
      */
     public function store(StudentRequest $request): RedirectResponse
     {
-        $this->studentService->createStudent($request->all());
-        return redirect()->route('students.index');
-    }
-    public function edit($id): View
-    {
-        $student = $this->studentService->getStudentById($id); // Get the student by its ID
-        $majors = Major::all(); // Fetch all majors for the dropdown
-        return view('Student.edit', compact('student', 'majors'));
-    }
-    // Update the student
-    public function update(StudentRequest $request, $id): RedirectResponse
-    {
-        $this->studentService->updateStudent($id, $request->all());
-        return redirect()->route('students.index');
+        $student = $this->_studentService->createStudent($request->all());
+
+        Mail::to($student->email)->send(new StudentCreatedMail($student));
+
+        return redirect()->route('student.index')
+            ->with('success', 'Mail has been sent successfully!');
     }
 
     /**
-     * Remove the specified student from storage.
+     * Show student edit form
      *
-     * @param int $id
+     * @param  int $id
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function edit(int $id): View
+    {
+        $student = $this->_studentService->getStudentById($id);
+
+        $majors = Major::all();
+
+        return view('Student.edit', compact('student', 'majors'));
+    }
+
+    /**
+     * Update Student
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  \App\Http\Requests\StudentRequest $request
+     * @param  int                               $id
+     * @return RedirectResponse
+     */
+    public function update(StudentRequest $request, int $id): RedirectResponse
+    {
+        $this->_studentService->updateStudent($id, $request->all());
+
+        return redirect()->route('student.index')
+            ->with('success', 'Student updated successfully!');
+    }
+
+    /**
+     * Destroy Student
+     *
+     * @param  int $id
+     * @return RedirectResponse
      */
     public function destroy(int $id): RedirectResponse
     {
-        $this->studentService->deletestudent($id);
-        return redirect()->route('students.index');
+        $this->_studentService->deletestudent($id);
+
+        return redirect()->route('student.index')
+            ->with('success', 'Student deleted successfully!');
     }
 }

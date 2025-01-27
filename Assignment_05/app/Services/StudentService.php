@@ -1,23 +1,31 @@
 <?php
+
 namespace App\Services;
+
 use App\Repositories\StudentRepositoryInterface;
 use App\Services\StudentServiceInterface;
+use App\Models\Student;
 use Illuminate\Database\Eloquent\Collection;
+
+/**
+ * Summary of StudentService
+ */
 class StudentService implements StudentServiceInterface
 {
     /**
      * @var StudentRepositoryInterface
      */
-    private $studentRepository;
+    private $_studentRepository;
     /**
-     * studentService constructor.
+     * StudentService constructor.
      *
      * @param StudentRepositoryInterface $studentRepository
      */
     public function __construct(StudentRepositoryInterface $studentRepository)
     {
-        $this->studentRepository = $studentRepository;
+        $this->_studentRepository = $studentRepository;
     }
+
     /**
      * Get all students.
      *
@@ -25,36 +33,50 @@ class StudentService implements StudentServiceInterface
      */
     public function getAllStudents(): Collection
     {
-        return $this->studentRepository->getAllStudents();
+        return $this->_studentRepository->getAllStudents();
     }
+
     /**
-     * Create a new student.
-     * 
-     * @param string $name
-     * 
-     * @return void
+     * Create a new student
+     *
+     * @param  array $studentData
+     * @return \App\Models\Student
      */
-    public function createStudent(array $student_data): void
+    public function createStudent(array $studentData): Student
     {
-        $this->studentRepository->createStudent($student_data);
+        return $this->_studentRepository->createStudent($studentData);
     }
+
+    /**
+     * Get Student By Id
+     *
+     * @param int $id
+     */
     public function getStudentById(int $id)
     {
-        return $this->studentRepository->getStudentById($id);
+        return $this->_studentRepository->getStudentById($id);
     }
-    public function updatestudent(int $id, array $student_data): void
-    {
-        $this->studentRepository->updateStudent($id, $student_data);
-    }
+
     /**
-     * Delete a student by ID.
-     * 
-     * @param int $id
-     * 
+     * Update Student
+     *
+     * @param  int   $id
+     * @param  array $studentData
+     * @return void
+     */
+    public function updatestudent(int $id, array $studentData): void
+    {
+        $this->_studentRepository->updateStudent($id, $studentData);
+    }
+
+    /**
+     * Delete Student
+     *
+     * @param  int $id
      * @return void
      */
     public function deleteStudent(int $id): void
     {
-        $this->studentRepository->deleteStudent($id);
+        $this->_studentRepository->deleteStudent($id);
     }
 }

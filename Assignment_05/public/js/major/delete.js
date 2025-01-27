@@ -1,19 +1,21 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Find all delete buttons
-    const deleteButtons = document.querySelectorAll('.btn-delete-major');
+document.addEventListener("DOMContentLoaded", function () {
+    const deleteButtons = document.querySelectorAll(".btn-delete-major");
 
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();  // Prevent default anchor action
-            
-            // Confirm before submitting
-            const confirmDelete = confirm('Are you sure you want to delete this major?');
-            
-            if (confirmDelete) {
-                const formId = button.getAttribute('data-form-id');
-                const form = document.getElementById(formId);
-                form.submit();
+    deleteButtons.forEach((button) => {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            const majorName = button.getAttribute("data-major-name");
+            const formAction = button.getAttribute("data-action");
+
+            document.getElementById("delete_major_name").innerText = majorName;
+
+            const modalForm = document.querySelector("#deleteModal form");
+            if (modalForm) {
+                modalForm.setAttribute("action", formAction);
             }
+
+            $("#deleteModal").modal("show");
         });
     });
 });

@@ -1,5 +1,5 @@
 body {
-    font-family: 'Noto Sans', sans-serif;
+    font-family: "Noto Sans", sans-serif;
 }
 .navbar-nav .nav-item {
     margin-right: 15px;
@@ -14,9 +14,9 @@ ul {
     margin-top: 30px;
 }
 .active-nav {
-    color: rgb(3, 52, 120); /* Custom text color */
-    font-weight: bold; /* Optional: make the active link bold */
+    color: rgb(3, 52, 120);
+    font-weight: bold;
 }
 .active-nav:hover {
-    color: #004085; /* Darker color when hovered */
+    color: #004085;
 }

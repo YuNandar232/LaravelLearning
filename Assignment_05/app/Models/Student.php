@@ -3,15 +3,28 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Summary of Student model
+ */
 class Student extends Model
 {
     protected $table = 'students';
-    protected $fillable = ['name', 'major_id', 'phone', 'email', 'address'];
+    protected $fillable = [
+        'name',
+        'major_id',
+        'phone',
+        'email',
+        'address'
+    ];
+
     /**
-     * Get the major that the student belongs to.
+     * Relationship with major
+     *
+     * @return BelongsTo<Major, Student>
      */
-    public function major()
+    public function major(): BelongsTo
     {
         return $this->belongsTo(Major::class);
     }

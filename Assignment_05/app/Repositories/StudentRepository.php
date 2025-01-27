@@ -1,54 +1,81 @@
 <?php
+
 namespace App\Repositories;
+
 use App\Models\Student;
 use Illuminate\Database\Eloquent\Collection;
+
+/**
+ * Summary of StudentRepository
+ */
 class StudentRepository implements StudentRepositoryInterface
 {
     /**
-     * Get all students.
+     * Get All Students
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection<Student>
      */
     public function getAllStudents(): Collection
     {
         return Student::with('major')->orderBy('created_at', 'asc')->get();
     }
+
     /**
-     * Create Student.
-     * @param string $name
-     * @return void
+     * Create Student
+     *
+     * @param  array $studentData
+     * @return TModel
      */
-    public function createStudent(array $student_data): void
+    public function createStudent(array $studentData): Student
     {
-        // Create a new student record with all the necessary fields
-        Student::create([
-            'name' => $student_data['name'],
-            'major_id' => $student_data['major_id'],
-            'phone' => $student_data['phone'],
-            'email' => $student_data['email'],
-            'address' => $student_data['address'],
-        ]);
-    }
-    public function getStudentById(int $id)
-    {
-         return Student::findOrFail($id); // Find the major by ID, will throw an exception if not found
+        $student = Student::create(
+            [
+                'name' => $studentData['name'],
+                'major_id' => $studentData['major_id'],
+                'phone' => $studentData['phone'],
+                'email' => $studentData['email'],
+                'address' => $studentData['address'],
+            ]
+        );
+        return $student;
     }
 
-    public function updateStudent(int $id, array $student_data): void
+    /**
+     * Get Student By Id
+     *
+     * @param  int $id
+     * @return TModel
+     */
+    public function getStudentById(int $id): Student
     {
-         // Find the student by ID
-         $student = Student::findOrFail($id);
-        $student->update([
-             'name' => $student_data['name'],
-             'major_id' => $student_data['major_id'],
-             'phone' => $student_data['phone'],
-             'email' => $student_data['email'],
-             'address' => $student_data['address'],
-        ]);
+        return Student::findOrFail($id);
     }
+
+    /**
+     * Update Student
+     *
+     * @param  int   $id
+     * @param  array $studentData
+     * @return void
+     */
+    public function updateStudent(int $id, array $studentData): void
+    {
+        $student = Student::findOrFail($id);
+        $student->update(
+            [
+                'name' => $studentData['name'],
+                'major_id' => $studentData['major_id'],
+                'phone' => $studentData['phone'],
+                'email' => $studentData['email'],
+                'address' => $studentData['address'],
+            ]
+        );
+    }
+
     /**
      * Delete Student.
-     * @param int $id
+     *
+     * @param  int $id
      * @return void
      */
     public function deleteStudent(int $id): void

@@ -7,12 +7,14 @@
                 <div class="card">
                     <div class="card-header">Create New Major</div>
                     <div class="card-body">
-                        <form action="{{ route('majors.store') }}" method="POST">
+                        <form action="{{ route('major.store') }}" method="POST">
                             @csrf
                             <div class="mb-3">
                                 <label for="name" class="form-label">Major Name</label>
-                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name">
-                                  @error('name') <!-- Display the validation error for 'name' -->
+                                <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                    id="name" name="name">
+                                @error('name')
+                                    <!-- Display the validation error for 'name' -->
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
